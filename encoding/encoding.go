@@ -84,12 +84,13 @@ func (e *Encoder) Encode(v *eml.Eml) error {
 					return err
 				}
 				e.w.Write([]byte("\n"))
-				nbCycle := int(len(a.Content) / 77)
+				e.w.Write([]byte(a.Content))
+				/*nbCycle := int(len(a.Content) / 77)
 				for i := 0; i < nbCycle; i++ {
 					index := i * 77
 					e.w.Write([]byte(a.Content[index:index+77] + "\n"))
 				}
-				e.w.Write([]byte(a.Content[(nbCycle * 77):len(a.Content)]))
+				e.w.Write([]byte(a.Content[(nbCycle * 77):len(a.Content)]))*/
 				e.w.Write([]byte("\n"))
 			}
 			e.w.Write([]byte("--" + v.ContentType.Boundary + "--\n"))
