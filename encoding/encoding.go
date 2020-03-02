@@ -90,7 +90,7 @@ func (e *Encoder) Encode(v *eml.Eml) error {
 					index := i * 77
 					e.w.Write([]byte(a.Content[index:index+77] + "\n"))
 				}
-				e.w.Write([]byte(a.Content[(nbCycle*77)-1 : len(a.Content)]))
+				e.w.Write([]byte(a.Content[(nbCycle * 77):len(a.Content)]))
 				e.w.Write([]byte("\n"))
 			}
 			e.w.Write([]byte("--" + v.ContentType.Boundary + "--\n"))
