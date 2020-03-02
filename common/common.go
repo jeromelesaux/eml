@@ -1,10 +1,5 @@
 package common
 
-import (
-	"regexp"
-	"strings"
-)
-
 var (
 	MimeVersion             = "Mime-Version:"
 	ContentType             = "Content-Type:" // multiline
@@ -27,36 +22,12 @@ var (
 	XMimeOle                = "X-MimeOLE:"
 	ThreadIndex             = "Thread-Index:"
 	Received                = "Received:" //multiline
+	ReplyTo                 = "Reply-To:"
+	InReplyTo               = "In-Reply-To:"
+	Boundary                = "boundary=\"(.*)\""
+	XSender                 = "X-Sender:"
+	XReceiver               = "X-Receiver:"
+	ContentId               = "Content-Id:"
 
 	SimpleValueRegex = "([^\n]*)"
 )
-
-func getSimpleValue(key, str string) string {
-	r := regexp.MustCompile(key + "\\s" + SimpleValueRegex)
-	matches := r.FindStringSubmatch(str)
-	if len(matches) >= 0 {
-		return matches[1]
-	}
-	return ""
-}
-
-func getMutlineValue(key, str string) string {
-	value := ""
-	r := regexp.MustCompile(key + "\\s")
-	matches := r.FindStringSubmatchIndex(str)
-
-	if len(matches) >= 0 {
-		substr := str[matches[len(matches)-1]:]
-		res := strings.Split(substr, "\n")
-		value += res[0] + "\n"
-		for i := 1; i < len(res); i++ {
-			v := res[i]
-			if strings.HasPrefix(v, "\t") {
-				value += v + "\n"
-			} else {
-				return value
-			}
-		}
-	}
-	return value
-}
