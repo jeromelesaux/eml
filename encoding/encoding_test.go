@@ -55,9 +55,18 @@ func TestAttachments(t *testing.T) {
 	f2 := "/Users/jeromelesaux/Downloads/crownland.dsk"
 	f3 := "/Users/jeromelesaux/Downloads/y2020.dsk"
 	e := eml.NewEml()
-	e.AddAttachment(f1)
-	e.AddAttachment(f2)
-	e.AddAttachment(f3)
+	err := e.AddAttachment(f1)
+	if err != nil {
+		t.Fatal(err)
+	}
+	err = e.AddAttachment(f2)
+	if err != nil {
+		t.Fatal(err)
+	}
+	err = e.AddAttachment(f3)
+	if err != nil {
+		t.Fatal(err)
+	}
 	e.From = "change@me.net"
 	e.To = "change@me.net"
 	e.XSender = "change@me.net"

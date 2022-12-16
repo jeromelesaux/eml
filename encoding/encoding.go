@@ -55,13 +55,22 @@ func (e *Encoder) Encode(v *eml.Eml) error {
 		if err != nil {
 			return err
 		}
-		e.w.Write([]byte("--" + v.ContentType.Boundary + "\n"))
-		e.w.Write([]byte(common.ContentTransferEncoding + " 7bit\n" + common.ContentType + "text/html;\n\tcharset=us-ascii\n\n<html><body></body></html>\n\n"))
+		_, err = e.w.Write([]byte("--" + v.ContentType.Boundary + "\n"))
+		if err != nil {
+			return err
+		}
+
+		_, err = e.w.Write([]byte(common.ContentTransferEncoding + " 7bit\n" + common.ContentType + "text/html;\n\tcharset=us-ascii\n\n<html><body></body></html>\n\n"))
+		if err != nil {
+			return err
+		}
 
 		if len(v.Attachments) > 0 {
 			for _, a := range v.Attachments {
-				e.w.Write([]byte("--" + v.ContentType.Boundary + "\n"))
-
+				_, err = e.w.Write([]byte("--" + v.ContentType.Boundary + "\n"))
+				if err != nil {
+					return err
+				}
 				_, err = e.w.Write([]byte(common.ContentType))
 				if err != nil {
 					return err
@@ -83,17 +92,32 @@ func (e *Encoder) Encode(v *eml.Eml) error {
 				if err != nil {
 					return err
 				}
-				e.w.Write([]byte("\n"))
+				_, err = e.w.Write([]byte("\n"))
+				if err != nil {
+					return err
+				}
 				//	e.w.Write([]byte(a.Content))
 				nbCycle := int(len(a.Content) / 77)
 				for i := 0; i < nbCycle; i++ {
 					index := i * 77
-					e.w.Write([]byte(a.Content[index:index+77] + "\n"))
+					_, err = e.w.Write([]byte(a.Content[index:index+77] + "\n"))
+					if err != nil {
+						return err
+					}
 				}
-				e.w.Write([]byte(a.Content[(nbCycle * 77):len(a.Content)]))
-				e.w.Write([]byte("\n"))
+				_, err = e.w.Write([]byte(a.Content[(nbCycle * 77):len(a.Content)]))
+				if err != nil {
+					return err
+				}
+				_, err = e.w.Write([]byte("\n"))
+				if err != nil {
+					return err
+				}
 			}
-			e.w.Write([]byte("--" + v.ContentType.Boundary + "--\n"))
+			_, err = e.w.Write([]byte("--" + v.ContentType.Boundary + "--\n"))
+			if err != nil {
+				return err
+			}
 		}
 
 	}
@@ -208,7 +232,7 @@ func getMultilineValue(key string, scan *bufio.Scanner) string {
 
 	if len(matches) >= 0 {
 		value += matches[1] + "\n"
-		r2 := regexp.MustCompile("^\\t([^\\n]*)")
+		r2 := regexp.MustCompile(`^\\t([^\\n]*)`)
 		for {
 			scan.Scan()
 			t := scan.Text()
